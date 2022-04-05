@@ -3,6 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.7.4/jsoneditor.min.css" integrity="sha512-LDaPaKECzpambd6J0xPGx2s/z8EA1rAm3JzmoMgKO0VTRbXHTeE54oDLRw26eFiyBZ3Cf888tBEHzeUTYA3ddw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <title>Client Side</title>
     <style>
@@ -14,13 +15,28 @@
         .form-group{
             margin: 0px 10px;
         }
+        .jsoneditor{
+            height: 80vh;
+        }
+        .jsoneditor_container{
+            width: 40%;
+        }
+        .json_content{
+            display: flex;
+            flex-direction:row;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .text-center{
+            text-align: center;
+        }
     </style>
   </head>
   <body>
-    
+    <h1 class="text-center">Operasi Dua Bilangan</h1>
     <form class="form">
         <div class="form-group">
-            <input id="a" placeholder="Bilangan 1" name="a" class="form-control" required value="1" />
+            <input type="number" id="a" placeholder="Bilangan 1" name="a" class="form-control" required value="1" />
         </div>
         <div class="form-group">
             <select id="operasi" name="operasi" class="form-control" required>
@@ -31,15 +47,31 @@
             </select>
         </div>
         <div class="form-group">
-            <input id="b" placeholder="Bilangan 2" name="b" class="form-control" required value="2" />
+            <input type="number" id="b" placeholder="Bilangan 2" name="b" class="form-control" required value="2" />
         </div>
         <p>=</p>
         <div class="form-group">
-            <input id="hasil" disabled name="hasil" class="form-control" value="3" />
+            <input type="number" id="hasil" disabled name="hasil" class="form-control" value="3" />
         </div>
     </form>
 
+    <div class="json_content">
+        <div class="jsoneditor_container">
+            <p>Request :</p>
+            <div class="jsoneditor" id="request"></div>
+        </div>
+        <div class="jsoneditor_container">
+            <p>Response :</p>
+            <div class="jsoneditor" id="response"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jsoneditor/9.7.4/jsoneditor.min.js" integrity="sha512-KQaWlVsZF0iPXCR8p176hVrg/rlw+smy8dpJ+vwiuvoHyGr8PTVvaAV4ZmsAYdCvMRP8e3sB9pl1mRuaunaXrg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
     <script>
+
+        const request = new JSONEditor(document.getElementById("request"), {})
+        const response = new JSONEditor(document.getElementById("response"), {})
 
         const connecting = async () => {
 
@@ -57,9 +89,11 @@
                 body: JSON.stringify(input)
             })
             .then(res => res.json())
-            .then(response =>{
-                if(!response.status) return alert(response.message);
-                document.getElementById("hasil").value = response.data
+            .then(res =>{
+                request.set(input)
+                response.set(res)
+                if(!res.status) return alert(res.message);
+                document.getElementById("hasil").value = res.data
             })
             .catch(e => {
                 alert(e);
@@ -72,6 +106,8 @@
 
         document.getElementById("a").addEventListener("keyup",onChange)
         document.getElementById("b").addEventListener("keyup",onChange)
+        document.getElementById("a").addEventListener("change",onChange)
+        document.getElementById("b").addEventListener("change",onChange)
         document.getElementById("operasi").addEventListener("change",onChange)
 
     </script>
