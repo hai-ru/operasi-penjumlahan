@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>Client Side</title>
+    <style>
+        .form{
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .form-group{
+            margin: 0px 10px;
+        }
+    </style>
+  </head>
+  <body>
+    
+    <form class="form">
+        <div class="form-group">
+            <input id="a" placeholder="Bilangan 1" name="a" class="form-control" required value="1" />
+        </div>
+        <div class="form-group">
+            <select id="operasi" name="operasi" class="form-control" required>
+                <option value="tambah">+</option>
+                <option value="kurang">-</option>
+                <option value="kali">x</option>
+                <option value="bagi">:</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input id="b" placeholder="Bilangan 2" name="b" class="form-control" required value="2" />
+        </div>
+        <p>=</p>
+        <div class="form-group">
+            <input id="hasil" disabled name="hasil" class="form-control" value="3" />
+        </div>
+    </form>
+
+    <script>
+
+        const connecting = async () => {
+
+            const input = {
+                "a":document.getElementById("a").value,
+                "b":document.getElementById("b").value,
+                "operasi":document.getElementById("operasi").value,
+            }
+
+            return await fetch("/index.php",{
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(input)
+            })
+            .then(res => res.json())
+            .then(response =>{
+                if(!response.status) return alert(response.message);
+                document.getElementById("hasil").value = response.data
+            })
+            .catch(e => {
+                alert(e);
+            })
+        }
+
+        const onChange = (e) => {
+            connecting();
+        }
+
+        document.getElementById("a").addEventListener("keyup",onChange)
+        document.getElementById("b").addEventListener("keyup",onChange)
+        document.getElementById("operasi").addEventListener("change",onChange)
+
+    </script>
+
+  </body>
+</html>
